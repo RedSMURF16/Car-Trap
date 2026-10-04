@@ -1,0 +1,66 @@
+[en] -- RedSMURF
+CAR_CHAT_TAG                                = ^4[CAR TRAP]^1
+CAR_CHAT_LIMIT                              = You've reached the maximum number of Car Traps ^4%d
+CAR_CHAT_NO_CAR                             = There are no Car Traps available
+CAR_CHAT_CREATE_NEW                         = ^3%s ^1created
+CAR_CHAT_REMOVE_CURRENT                     = ^3%s ^1removed
+CAR_CHAT_REMOVE_ALL                         = All Car Traps removed
+CAR_CHAT_SAVE                               = Car Trap data saved in ^4%s
+CAR_CHAT_SHOW_CURRENT                       = ^3%s ^1is %L
+CAR_CHAT_SHOW_ALL_SHOWN                     = All Car Traps are now Shown
+CAR_CHAT_SHOW_ALL_HIDDEN                    = All Car Traps are now Hidden
+CAR_CHAT_STATUS_CURRENT                     = ^3%s ^1is %L
+CAR_CHAT_STATUS_ALL_ENABLED                 = All Car Traps are now Enabled
+CAR_CHAT_STATUS_ALL_DISABLED                = All Car Traps are now Disabled
+
+CAR_CHAT_SHOWN                              = Shown
+CAR_CHAT_HIDDEN                             = Hidden
+CAR_CHAT_ENABLED                            = Enabled
+CAR_CHAT_DISABLED                           = Disabled
+
+CAR_NAV_NEXT                                = Next
+CAR_NAV_BACK                                = Back
+CAR_ON                                      = \y[ON]
+CAR_OFF                                     = \r[OFF]
+CAR_SHOWN                                   = \y[SHOWN]
+CAR_HIDDEN                                  = \r[HIDDEN]
+CAR_ENABLED                                 = \y[ENABLED]
+CAR_DISABLED                                = \r[DISABLED]
+CAR_ROTATE_PITCH                            = \d[PITCH]
+CAR_ROTATE_YAW                              = \d[YAW]
+CAR_ROTATE_ROLL                             = \d[ROLL]
+CAR_ROTATE_SKIN_1                           = \d[SKIN 1]
+CAR_ROTATE_SKIN_2                           = \d[SKIN 2]
+CAR_ROTATE_SKIN_3                           = \d[SKIN 3]
+
+CAR_MENU_TITLE                              = \dCar Trap - Version \y%s
+CAR_MENU_TITLE_PAGE                         = \yPage:\r
+CAR_ROOT_CREATE                             = Create Car Trap
+CAR_ROOT_EDIT                               = Edit Car Trap
+CAR_ROOT_REMOVE                             = Remove Car Trap
+CAR_ROOT_SAVE                               = Save Data
+CAR_ROOT_SHOW                               = Visibility Settings
+CAR_ROOT_STATUS                             = Status Settings
+CAR_ROOT_NOCLIP                             = Status Noclip %L
+CAR_ROOT_GODMODE                            = Status Godmode %L
+CAR_ROOT_ROTATE                             = Adjust Rotation
+
+CAR_EDIT_SHOW                               = Edit Visibility
+CAR_EDIT_STATUS                             = Edit Status
+
+CAR_REMOVE_CURRENT                          = Remove Car Trap >> \y%s
+CAR_REMOVE_ALL                              = Remove all Car Traps
+
+CAR_SHOW_CURRENT                            = Show Car Trap >> %s%s %L
+CAR_SHOW_ALL_SHOW                           = Show all Car Traps
+CAR_SHOW_ALL_HIDE                           = Hide all Car Traps
+
+CAR_STATUS_CURRENT                          = Enable Car Trap >> %s%s %L
+CAR_STATUS_ALL_ENABLE                       = Enable all Car Traps
+CAR_STATUS_ALL_DISABLE                      = Disable all Car Traps
+
+CAR_ROTATE_UP                               = Turn Up
+CAR_ROTATE_DOWN                             = Turn Down
+CAR_ROTATE_MODE                             = Rotate Mode >> %L
+CAR_ROTATE_SKIN                             = Rotate Skin >> %L
+CAR_ROTATE_PLACE                            = Place Car Trap
