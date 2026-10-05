@@ -191,8 +191,6 @@ enum _:CAR
     CAR_ITEM,
     CAR_FLAGS,
     CAR_TEAM,
-    CAR_SIZE,
-    CAR_TRIGGER,
     CAR_SKIN,
     CAR_ACTIVATOR,
     CAR_NAME[MAX_VALUE_LENGTH],
@@ -1957,7 +1955,7 @@ public fwdUse(iEnt, iCaller, iActivator, iType, Float:fValue)
         return HAM_IGNORED
 
     if ( !(eCar[CAR_FLAGS] & FLAG_ACTIVE)
-    || eCar[CAR_FLAGS] & FLAG_FALL
+    || eCar[CAR_FLAGS] & (FLAG_FALL | FLAG_IDLE)
     || !(CsTeams:eCar[CAR_TEAM] & cs_get_user_team(iActivator))
     || get_gametime() < eCar[CAR_NEXT_COOLDOWN] )
         return HAM_IGNORED
@@ -1970,6 +1968,7 @@ public fwdUse(iEnt, iCaller, iActivator, iType, Float:fValue)
 
     eCar[CAR_ACTIVATOR] = iActivator
     eCar[CAR_FLAGS] |= FLAG_FALL
+    eCar[CAR_FLAGS] &= ~FLAG_RAISE
     carSetSeq(eCar[CAR_ID_SWITCH], CAR_SEQ_DOWN)
     ArraySetArray(g_aCar, iItem, eCar)
     return HAM_IGNORED
