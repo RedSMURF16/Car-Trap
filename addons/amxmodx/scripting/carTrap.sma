@@ -1340,7 +1340,6 @@ public menuHandlerRotateSwitch(id, menu, item)
             if ( ++ g_ePlayerData[id][PDATA_ROTATE_MODE] > ROTATE_MODE_ROLL )
                 g_ePlayerData[id][PDATA_ROTATE_MODE] = ROTATE_MODE_PITCH
 
-            ArraySetArray(g_aCar, iItem, eCar)
             carSound(id, SOUND_MENU_NAV)
             carMenu(id, MENU_ROTATE_SWITCH)
         }
@@ -1498,16 +1497,6 @@ public menuHandlerRotateCar(id, menu, item)
 
     menu_destroy(menu)
     return PLUGIN_HANDLED
-}
-
-stock carSparks(Float:fOrigin[3])
-{
-    message_begin_f(MSG_PVS, SVC_TEMPENTITY, fOrigin)
-    write_byte(TE_SPARKS)
-    write_coord_f(fOrigin[0])
-    write_coord_f(fOrigin[1])
-    write_coord_f(fOrigin[2])
-    message_end()
 }
 
 public carTask()
