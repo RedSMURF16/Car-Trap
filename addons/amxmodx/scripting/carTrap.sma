@@ -218,7 +218,7 @@ enum _:CAR
     CAR_SHAKE_FREQUENCY,
     CAR_SHAKE_DURATION,
 
-    Float:CAR_NEXT_COOLDOWN,
+    Float:CAR_NEXT_ACTIVE,
     Float:CAR_NEXT_FALL,
     Float:CAR_NEXT_RAISE
 }
@@ -1554,7 +1554,7 @@ public carTask()
                     eCar[CAR_ACTIVATOR] = 0
                     eCar[CAR_FLAGS] &= ~FLAG_IDLE
                     eCar[CAR_FLAGS] |= FLAG_RAISE
-                    eCar[CAR_NEXT_COOLDOWN] = fCurrentTime + random_float(eCar[CAR_COOLDOWN][0], eCar[CAR_COOLDOWN][1])
+                    eCar[CAR_NEXT_ACTIVE] = fCurrentTime + random_float(eCar[CAR_COOLDOWN][0], eCar[CAR_COOLDOWN][1])
                     carSetSeq(eCar[CAR_ID_SWITCH], CAR_SEQ_UP)
 
                     bModified = true
@@ -1957,7 +1957,7 @@ public fwdUse(iEnt, iCaller, iActivator, iType, Float:fValue)
     if ( !(eCar[CAR_FLAGS] & FLAG_ACTIVE)
     || eCar[CAR_FLAGS] & (FLAG_FALL | FLAG_IDLE)
     || !(CsTeams:eCar[CAR_TEAM] & cs_get_user_team(iActivator))
-    || get_gametime() < eCar[CAR_NEXT_COOLDOWN] )
+    || get_gametime() < eCar[CAR_NEXT_ACTIVE] )
         return HAM_IGNORED
 
     new szSound[MAX_RESOURCE_PATH_LENGTH]
@@ -2397,7 +2397,7 @@ stock carReset()
     for ( new i = 0; i < g_iCar; i ++ )
     {
         ArrayGetArray(g_aCar, i, eCar)
-        eCar[CAR_NEXT_COOLDOWN] = 0.0
+        eCar[CAR_NEXT_ACTIVE] = 0.0
         eCar[CAR_NEXT_FALL] = 0.0
         eCar[CAR_NEXT_RAISE] = 0.0
         ArraySetArray(g_aCar, i, eCar)
