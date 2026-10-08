@@ -99,10 +99,7 @@ enum
     FLAG_FALL               = (1 << 5),
     FLAG_IDLE               = (1 << 6),
     FLAG_RAISE              = (1 << 7),
-    FLAG_LOCK               = (1 << 8),
-    FLAG_SOUND_ROPE         = (1 << 9),
-    FLAG_SOUND_SWITCH       = (1 << 10),
-    FLAG_SOUND_SMASH        = (1 << 11)
+    FLAG_LOCK               = (1 << 8)
 }
 
 enum
@@ -148,6 +145,7 @@ enum _:MAIN_SETTINGS
     Array:SETTING_DEFAULT_SOUND_SMASH,
     SETTING_DEFAULT_FLAGS,
     SETTING_DEFAULT_TEAM,
+    Float:SETTING_DEFAULT_FRAMERATE,
     Float:SETTING_DEFAULT_FALL_STRENGTH[2],
     Float:SETTING_DEFAULT_FALL_FREQ[2],
     Float:SETTING_DEFAULT_IDLE_DURATION[2],
@@ -204,9 +202,6 @@ enum _:CAR
     Float:CAR_ORIGIN_ROPE[3],
     Float:CAR_MINS[3],
     Float:CAR_MAXS[3],
-    Array:CAR_SOUND_ROPE,
-    Array:CAR_SOUND_SWITCH,
-    Array:CAR_SOUND_SMASH,
 
     Float:CAR_FALL_STRENGTH[2],
     Float:CAR_FALL_FREQ[2],
@@ -501,9 +496,6 @@ ReadFile()
                         eCar[CAR_SHAKE_AMPLITUDE]           = g_eSettings[SETTING_DEFAULT_SHAKE_AMPLITUDE]
                         eCar[CAR_SHAKE_FREQUENCY]           = g_eSettings[SETTING_DEFAULT_SHAKE_FREQUENCY]
                         eCar[CAR_SHAKE_DURATION]            = g_eSettings[SETTING_DEFAULT_SHAKE_DURATION]
-                        eCar[CAR_SOUND_ROPE]                = ArrayClone(g_eSettings[SETTING_DEFAULT_SOUND_ROPE])
-                        eCar[CAR_SOUND_SWITCH]              = ArrayClone(g_eSettings[SETTING_DEFAULT_SOUND_SWITCH])
-                        eCar[CAR_SOUND_SMASH]               = ArrayClone(g_eSettings[SETTING_DEFAULT_SOUND_SMASH])
 
                         iSection = SECTION_CAR
                         g_iCarConfig ++
@@ -543,6 +535,8 @@ ReadFile()
                             parseSetting(DTYPE_FLAGS, szValue, charsmax(szValue), g_eSettings[SETTING_DEFAULT_FLAGS], charsmax(g_eSettings[SETTING_DEFAULT_FLAGS]))
                         else if ( equali(szKey, "SETTING_DEFAULT_TEAM") )
                             parseSetting(DTYPE_INT, szValue, charsmax(szValue), g_eSettings[SETTING_DEFAULT_TEAM], charsmax(g_eSettings[SETTING_DEFAULT_TEAM]))
+                        else if ( equali(szKey, "SETTING_DEFAULT_FRAMERATE") )
+                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_DEFAULT_FRAMERATE], charsmax(g_eSettings[SETTING_DEFAULT_FRAMERATE]))
                         else if ( equali(szKey, "SETTING_DEFAULT_FALL_STRENGTH") )
                             parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_DEFAULT_FALL_STRENGTH], charsmax(g_eSettings[SETTING_DEFAULT_FALL_STRENGTH]))
                         else if ( equali(szKey, "SETTING_DEFAULT_FALL_FREQ") )
@@ -608,37 +602,7 @@ ReadFile()
                     }
                     case SECTION_CAR:
                     {
-                        if ( equali(szKey, "CAR_SOUND_ROPE") )
-                        {
-                            if ( !(eCar[CAR_FLAGS] & CAR_SOUND_ROPE) )
-                            {
-                                ArrayClear(eCar[CAR_SOUND_ROPE])
-                                eCar[CAR_FLAGS] |= FLAG_SOUND_ROPE
-                            }
-
-                            parseSetting(DTYPE_ARRAY_SOUND, szValue, charsmax(szValue), eCar[CAR_SOUND_ROPE], charsmax(eCar[CAR_SOUND_ROPE]))
-                        }
-                        if ( equali(szKey, "CAR_SOUND_SWITCH") )
-                        {
-                            if ( !(eCar[CAR_FLAGS] & CAR_SOUND_SWITCH) )
-                            {
-                                ArrayClear(eCar[CAR_SOUND_SWITCH])
-                                eCar[CAR_FLAGS] |= FLAG_SOUND_SWITCH
-                            }
-
-                            parseSetting(DTYPE_ARRAY_SOUND, szValue, charsmax(szValue), eCar[CAR_SOUND_SWITCH], charsmax(eCar[CAR_SOUND_SWITCH]))
-                        }
-                        else if ( equali(szKey, "CAR_SOUND_ROPE") )
-                        {
-                            if ( !(eCar[CAR_FLAGS] & FLAG_SOUND_SMASH) )
-                            {
-                                ArrayClear(eCar[CAR_SOUND_ROPE])
-                                eCar[CAR_FLAGS] |= FLAG_SOUND_SMASH
-                            }
-
-                            parseSetting(DTYPE_ARRAY_SOUND, szValue, charsmax(szValue), eCar[CAR_SOUND_ROPE], charsmax(eCar[CAR_SOUND_ROPE]))
-                        }
-                        else if ( equali(szKey, "CAR_FLAGS") )
+                        if ( equali(szKey, "CAR_FLAGS") )
                             parseSetting(DTYPE_FLAGS, szValue, charsmax(szValue), eCar[CAR_FLAGS], charsmax(eCar[CAR_FLAGS]))
                         else if ( equali(szKey, "CAR_TEAM") )
                             parseSetting(DTYPE_INT, szValue, charsmax(szValue), eCar[CAR_TEAM], charsmax(eCar[CAR_TEAM]))
@@ -1463,7 +1427,7 @@ public menuHandlerRotateCar(id, menu, item)
             set_pdata_float(id, PDATA_NEXT_ATTACK, 0.0, XO_CBASEPLAYER, XO_CBASEPLAYER)
             g_ePlayerData[id][PDATA_CAR_GHOST] = 0
 
-            eCar[CAR_FLAGS] &= ~(FLAG_GHOST | FLAG_LOCK)
+            eCar[CAR_FLAGS] &= ~FLAG_GHOST
             eCar[CAR_FLAGS] |= FLAG_ACTIVE
             eCar[CAR_ANGLES_CAR][0] = -eCar[CAR_ANGLES_CAR][0]
             carSetSize(eCar, ENTITY_CAR)
@@ -1537,7 +1501,7 @@ public carTask()
                 if ( fCurrentTime >= eCar[CAR_NEXT_RAISE] )
                 {
                     new szSound[MAX_RESOURCE_PATH_LENGTH]
-                    ArrayGetString(eCar[CAR_SOUND_ROPE], random(ArraySize(eCar[CAR_SOUND_ROPE])), szSound, charsmax(szSound))
+                    ArrayGetString(g_eSettings[SETTING_DEFAULT_SOUND_ROPE], random(ArraySize(g_eSettings[SETTING_DEFAULT_SOUND_ROPE])), szSound, charsmax(szSound))
                     engfunc(EngFunc_EmitSound, eCar[CAR_ID_CAR], CHAN_BODY, szSound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM)
 
                     eCar[CAR_ACTIVATOR] = 0
@@ -1878,7 +1842,7 @@ public fwdStartFrame()
             if ( fOrigin[2] <= eCar[CAR_ORIGIN_CAR_END][2] + CAR_POINT_EPSILON )
             {
                 new szSound[MAX_RESOURCE_PATH_LENGTH]
-                ArrayGetString(eCar[CAR_SOUND_SMASH], random(ArraySize(eCar[CAR_SOUND_SMASH])), szSound, charsmax(szSound))
+                ArrayGetString(g_eSettings[SETTING_DEFAULT_SOUND_SMASH], random(ArraySize(g_eSettings[SETTING_DEFAULT_SOUND_SMASH])), szSound, charsmax(szSound))
                 engfunc(EngFunc_EmitSound, eCar[CAR_ID_CAR], CHAN_ITEM, szSound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM)
 
                 eCar[CAR_FLAGS] &= ~FLAG_FALL
@@ -1950,9 +1914,9 @@ public fwdUse(iEnt, iCaller, iActivator, iType, Float:fValue)
         return HAM_IGNORED
 
     new szSound[MAX_RESOURCE_PATH_LENGTH]
-    ArrayGetString(eCar[CAR_SOUND_SWITCH], random(ArraySize(eCar[CAR_SOUND_SWITCH])), szSound, charsmax(szSound))
+    ArrayGetString(g_eSettings[SETTING_DEFAULT_SOUND_SWITCH], random(ArraySize(g_eSettings[SETTING_DEFAULT_SOUND_SWITCH])), szSound, charsmax(szSound))
     engfunc(EngFunc_EmitSound, eCar[CAR_ID_SWITCH], CHAN_ITEM, szSound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM)
-    ArrayGetString(eCar[CAR_SOUND_ROPE], random(ArraySize(eCar[CAR_SOUND_ROPE])), szSound, charsmax(szSound))
+    ArrayGetString(g_eSettings[SETTING_DEFAULT_SOUND_ROPE], random(ArraySize(g_eSettings[SETTING_DEFAULT_SOUND_ROPE])), szSound, charsmax(szSound))
     engfunc(EngFunc_EmitSound, eCar[CAR_ID_CAR], CHAN_BODY, szSound, VOL_NORM, ATTN_NORM, 0, PITCH_NORM)
 
     eCar[CAR_ACTIVATOR] = iActivator
@@ -2255,7 +2219,7 @@ stock carSetSeq(iEnt, iSequence)
 {
     set_pev(iEnt, pev_sequence, iSequence)
     set_pev(iEnt, pev_frame, 0.0)
-    set_pev(iEnt, pev_framerate, 1.0)
+    set_pev(iEnt, pev_framerate, g_eSettings[SETTING_DEFAULT_FRAMERATE])
     set_pev(iEnt, pev_animtime, get_gametime())
 }
 
@@ -2274,6 +2238,7 @@ stock carSetSize(eCar[CAR], iEntity)
     }
     else if ( iEntity == ENTITY_CAR )
     {
+        eCar[CAR_FLAGS] &= ~FLAG_LOCK
         carSelect(eCar, TARGET_CLEAR)
         engfunc(EngFunc_SetOrigin, eCar[CAR_ID_CAR], eCar[CAR_ORIGIN_CAR_START])
         set_pev(eCar[CAR_ID_CAR], pev_angles, eCar[CAR_ANGLES_CAR])
