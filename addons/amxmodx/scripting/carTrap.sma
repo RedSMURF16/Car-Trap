@@ -95,11 +95,10 @@ enum
     FLAG_SHOW               = (1 << 1),
     FLAG_GHOST              = (1 << 2),
     FLAG_ACTIVE             = (1 << 3),
-    FLAG_PENDING            = (1 << 4),
-    FLAG_FALL               = (1 << 5),
-    FLAG_IDLE               = (1 << 6),
-    FLAG_RAISE              = (1 << 7),
-    FLAG_LOCK               = (1 << 8)
+    FLAG_FALL               = (1 << 4),
+    FLAG_IDLE               = (1 << 5),
+    FLAG_RAISE              = (1 << 6),
+    FLAG_LOCK               = (1 << 7)
 }
 
 enum
@@ -677,14 +676,6 @@ stock carTerminate()
     {
         ArrayGetArray(g_aCar, i, eCar)
         eCar[CAR_FLAGS] &= ~(FLAG_FALL | FLAG_IDLE | FLAG_RAISE)
-        if ( !(eCar[CAR_FLAGS] & FLAG_PENDING) )
-        {
-            ArraySetArray(g_aCar, i, eCar)
-            continue
-        }
-
-        eCar[CAR_FLAGS] |= FLAG_ACTIVE
-        eCar[CAR_FLAGS] &= ~FLAG_PENDING
         ArraySetArray(g_aCar, i, eCar)
     }
 }
