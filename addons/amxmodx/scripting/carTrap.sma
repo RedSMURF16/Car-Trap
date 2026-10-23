@@ -9,9 +9,9 @@
 *		None
 *
 *	Commands:
-*       say /ct                     "Opens the Car Trap menu."
-*       say_team /ct                "Opens the Car Trap menu."
-*       ct_reload                       "Reloads the configuration file."
+*       say /cartrap                     "Opens the Car Trap menu."
+*       say_team /cartrap                "Opens the Car Trap menu."
+*       cartrap_reload                   "Reloads the configuration file."
 *
 *	Changelog:
 *       v1.0: Initial release.
@@ -353,12 +353,12 @@ new g_szRotateSkin[][] = {"CAR_ROTATE_SKIN_1", "CAR_ROTATE_SKIN_2", "CAR_ROTATE_
 
 public plugin_init()
 {
-    register_plugin("Car car", PLUGIN_VERSION, "RedSMURF")
-    register_cvar("RedSMURF_ct", PLUGIN_VERSION, ADMIN_ACCESS)
+    register_plugin("Car Trap", PLUGIN_VERSION, "RedSMURF")
+    register_cvar("RedSMURF_CarTrap", PLUGIN_VERSION, ADMIN_ACCESS)
 
-    register_clcmd("say /ct",       "cmdMenu", ADMIN_ACCESS, "-- Opens the Car car menu.")
-    register_clcmd("say_team /ct",  "cmdMenu", ADMIN_ACCESS, "-- Opens the Car car menu.")
-    register_concmd("ct_reload",  "cmdReload", ADMIN_ACCESS, "-- Reloads the configuration file")
+    register_clcmd("say /cartrap",       "cmdMenu", ADMIN_ACCESS, "-- Opens the Car Trap menu.")
+    register_clcmd("say_team /cartrap",  "cmdMenu", ADMIN_ACCESS, "-- Opens the Car Trap menu.")
+    register_concmd("cartrap_reload",  "cmdReload", ADMIN_ACCESS, "-- Reloads the configuration file")
     register_dictionary("CarTrap.txt")
 
     g_iFwdStartFrame = register_forward(FM_StartFrame, "fwdStartFrame")
