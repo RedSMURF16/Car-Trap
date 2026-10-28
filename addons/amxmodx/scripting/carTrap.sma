@@ -48,6 +48,13 @@
 #endif
 
 #define MAX_ENT                     32
+#define CAR_CHECK                   10.0
+#define CAR_OFFSET_BASE             120.0
+#define CAR_OFFSET_MIN              65.0
+#define CAR_OFFSET_MAX              900.0
+#define CAR_OFFSET_STEP             10.0
+#define CAR_GHOST_ALPHA             120
+#define CAR_ROTATION_STEP           22.5
 #define ADMIN_ACCESS                ADMIN_RCON
 #define PDATA_NEXT_ATTACK           83
 #define XO_CBASEPLAYER              5
@@ -170,13 +177,7 @@ enum _:MAIN_SETTINGS
     Float:SETTING_MAXS_CAR_3[3],
 
     bool:SETTING_CAR_LOAD,
-    Float:SETTING_CAR_CHECK,
     Float:SETTING_CAR_TASK,
-    Float:SETTING_OFFSET_BASE,
-    Float:SETTING_OFFSET[2],
-    Float:SETTING_OFFSET_STEP,
-    SETTING_GHOST_ALPHA,
-    Float:SETTING_ROTATION_STEP
 }
 
 enum _:CAR
@@ -579,20 +580,8 @@ ReadFile()
                             parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_MAXS_CAR_3], charsmax(g_eSettings[SETTING_MAXS_CAR_3]))
                         else if ( equali(szKey, "SETTING_CAR_LOAD") )
                             parseSetting(DTYPE_INT, szValue, charsmax(szValue), g_eSettings[SETTING_CAR_LOAD], charsmax(g_eSettings[SETTING_CAR_LOAD]))
-                        else if ( equali(szKey, "SETTING_CAR_CHECK") )
-                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_CAR_CHECK], charsmax(g_eSettings[SETTING_CAR_CHECK]))
                         else if ( equali(szKey, "SETTING_CAR_TASK") )
                             parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_CAR_TASK], charsmax(g_eSettings[SETTING_CAR_TASK]))
-                        else if ( equali(szKey, "SETTING_OFFSET_BASE") )
-                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_OFFSET_BASE], charsmax(g_eSettings[SETTING_OFFSET_BASE]))
-                        else if ( equali(szKey, "SETTING_OFFSET") )
-                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_OFFSET], charsmax(g_eSettings[SETTING_OFFSET]))
-                        else if ( equali(szKey, "SETTING_OFFSET_STEP") )
-                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_OFFSET_STEP], charsmax(g_eSettings[SETTING_OFFSET_STEP]))
-                        else if ( equali(szKey, "SETTING_GHOST_ALPHA") )
-                            parseSetting(DTYPE_INT, szValue, charsmax(szValue), g_eSettings[SETTING_GHOST_ALPHA], charsmax(g_eSettings[SETTING_GHOST_ALPHA]))
-                        else if ( equali(szKey, "SETTING_ROTATION_STEP") )
-                            parseSetting(DTYPE_FLOAT, szValue, charsmax(szValue), g_eSettings[SETTING_ROTATION_STEP], charsmax(g_eSettings[SETTING_ROTATION_STEP]))
                     }
                     case SECTION_CAR:
                     {
@@ -1254,7 +1243,7 @@ public menuHandlerRotateSwitch(id, menu, item)
         case ROTATE_SWITCH_UP:
         {
             pev(eCar[CAR_ID_SWITCH], pev_angles, eCar[CAR_ANGLES_SWITCH])
-            eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] -= g_eSettings[SETTING_ROTATION_STEP]
+            eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] -= CAR_ROTATION_STEP
             if ( eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] < -180.0 ) eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] += 360.0
 
             set_pev(eCar[CAR_ID_SWITCH], pev_angles, eCar[CAR_ANGLES_SWITCH])
@@ -1266,7 +1255,7 @@ public menuHandlerRotateSwitch(id, menu, item)
         case ROTATE_SWITCH_DOWN:
         {
             pev(eCar[CAR_ID_SWITCH], pev_angles, eCar[CAR_ANGLES_SWITCH])
-            eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] += g_eSettings[SETTING_ROTATION_STEP]
+            eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] += CAR_ROTATION_STEP
             if ( eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] > 180.0 ) eCar[CAR_ANGLES_SWITCH][g_ePlayerData[id][PDATA_ROTATE_MODE]] -= 360.0
 
             set_pev(eCar[CAR_ID_SWITCH], pev_angles, eCar[CAR_ANGLES_SWITCH])
@@ -1358,7 +1347,7 @@ public menuHandlerRotateCar(id, menu, item)
         case ROTATE_CAR_UP:
         {
             pev(eCar[CAR_ID_CAR], pev_angles, eCar[CAR_ANGLES_CAR])
-            eCar[CAR_ANGLES_CAR][1] -= g_eSettings[SETTING_ROTATION_STEP]
+            eCar[CAR_ANGLES_CAR][1] -= CAR_ROTATION_STEP
             if ( eCar[CAR_ANGLES_CAR][1] < -180.0 ) eCar[CAR_ANGLES_CAR][1] += 360.0
 
             set_pev(eCar[CAR_ID_CAR], pev_angles, eCar[CAR_ANGLES_CAR])
@@ -1370,7 +1359,7 @@ public menuHandlerRotateCar(id, menu, item)
         case ROTATE_CAR_DOWN:
         {
             pev(eCar[CAR_ID_CAR], pev_angles, eCar[CAR_ANGLES_CAR])
-            eCar[CAR_ANGLES_CAR][1] += g_eSettings[SETTING_ROTATION_STEP]
+            eCar[CAR_ANGLES_CAR][1] += CAR_ROTATION_STEP
             if ( eCar[CAR_ANGLES_CAR][1] > 180.0 ) eCar[CAR_ANGLES_CAR][1] -= 360.0
 
             set_pev(eCar[CAR_ID_CAR], pev_angles, eCar[CAR_ANGLES_CAR])
@@ -1511,7 +1500,7 @@ stock carCreate(id, iItem)
         EnableAction(id)
         g_ePlayerData[id][PDATA_CAR_GHOST] = eCar[CAR_ID_SWITCH]
         g_ePlayerData[id][PDATA_ROTATE_MODE] = ROTATE_MODE_YAW
-        g_ePlayerData[id][PDATA_OFFSET] = g_eSettings[SETTING_OFFSET_BASE]
+        g_ePlayerData[id][PDATA_OFFSET] = CAR_OFFSET_BASE
 
         eCar[CAR_FLAGS] |= FLAG_GHOST
         eCar[CAR_SKIN] = g_ePlayerData[id][PDATA_ROTATE_SKIN]
@@ -1929,14 +1918,14 @@ public fwdPreThink(id)
             {
                 if ( iButton & IN_ATTACK )
                 {
-                    g_ePlayerData[id][PDATA_OFFSET]      += g_eSettings[SETTING_OFFSET_STEP]
-                    g_ePlayerData[id][PDATA_OFFSET]      = floatclamp(g_ePlayerData[id][PDATA_OFFSET], g_eSettings[SETTING_OFFSET][0], g_eSettings[SETTING_OFFSET][1])
+                    g_ePlayerData[id][PDATA_OFFSET]      += CAR_OFFSET_STEP
+                    g_ePlayerData[id][PDATA_OFFSET]      = floatclamp(g_ePlayerData[id][PDATA_OFFSET], CAR_OFFSET_MIN, CAR_OFFSET_MAX)
                     g_ePlayerData[id][PDATA_NEXT_OFFSET] = fCurrentTime + 0.1
                 }
                 else if ( iButton & IN_ATTACK2 )
                 {
-                    g_ePlayerData[id][PDATA_OFFSET]      -= g_eSettings[SETTING_OFFSET_STEP]
-                    g_ePlayerData[id][PDATA_OFFSET]      = floatclamp(g_ePlayerData[id][PDATA_OFFSET], g_eSettings[SETTING_OFFSET][0], g_eSettings[SETTING_OFFSET][1])
+                    g_ePlayerData[id][PDATA_OFFSET]      -= CAR_OFFSET_STEP
+                    g_ePlayerData[id][PDATA_OFFSET]      = floatclamp(g_ePlayerData[id][PDATA_OFFSET], CAR_OFFSET_MIN, CAR_OFFSET_MAX)
                     g_ePlayerData[id][PDATA_NEXT_OFFSET] = fCurrentTime + 0.1
                 }
             }
@@ -2021,7 +2010,7 @@ stock carCheck(id)
     global_get(glb_v_forward, fVec2)
 
     iBest = -1
-    fBestDist = g_eSettings[SETTING_CAR_CHECK]
+    fBestDist = CAR_CHECK
     for ( new i = 0; i < g_iCar; i ++ )
     {
         ArrayGetArray(g_aCar, i, eCar)
@@ -2279,12 +2268,12 @@ stock carSelect(eCar[CAR], iAction, bool:bCarExists = true)
     }
     else if ( iAction == TARGET_GHOST )
     {
-        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, g_eSettings[SETTING_GHOST_ALPHA])
+        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
 
         if ( bCarExists )
         {
-            set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, g_eSettings[SETTING_GHOST_ALPHA])
-            set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, g_eSettings[SETTING_GHOST_ALPHA])
+            set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
+            set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
         }
     }
     else if ( iAction == TARGET_HIDE )
@@ -2507,3 +2496,8 @@ stock LogConfigError(const iLine, const szText[], any:...)
 
     log_to_file(ERROR_FILE, "^nLine %d: %s", iLine, szError)
 }
+
+
+
+
+
