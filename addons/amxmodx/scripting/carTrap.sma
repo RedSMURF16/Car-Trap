@@ -21,9 +21,7 @@
 #include <amxmodx>
 #include <amxmisc>
 #include <cstrike>
-#include <engine>
 #include <fakemeta>
-#include <fun>
 #include <hamsandwich>
 #include <xs>
 
@@ -193,7 +191,6 @@ enum _:CAR
     CAR_SKIN,
     CAR_ACTIVATOR,
     CAR_NAME[MAX_VALUE_LENGTH],
-    CAR_MODEL[MAX_RESOURCE_PATH_LENGTH],
 
     Float:CAR_ORIGIN_SWITCH[3],
     Float:CAR_ANGLES_SWITCH[3],
@@ -349,8 +346,6 @@ new Array:g_aCar,
     g_iCar, g_iCarConfig, g_iScreenShake,
     g_iMaxPlayers
 
-new const g_iColorActive[] = { 0, 255, 0 }
-new const g_iColorInactive[] = { 255, 0, 0 }
 new g_szRotateMode[][] = {"CAR_ROTATE_PITCH", "CAR_ROTATE_YAW", "CAR_ROTATE_ROLL"}
 new g_szRotateSkin[][] = {"CAR_ROTATE_SKIN_1", "CAR_ROTATE_SKIN_2", "CAR_ROTATE_SKIN_3"}
 
@@ -716,10 +711,10 @@ public menuRoot(id, iMenu)
 
     menu_addblank2(iMenu)
 
-    formatex(szItem, charsmax(szItem), "%L", id, "CAR_ROOT_NOCLIP", id, get_user_noclip(id) ? "CAR_ON" : "CAR_OFF")
+    formatex(szItem, charsmax(szItem), "%L", id, "CAR_ROOT_NOCLIP", id, (pev(id, pev_movetype) == MOVETYPE_NOCLIP) ? "CAR_ON" : "CAR_OFF")
     menu_additem(iMenu, szItem)
 
-    formatex(szItem, charsmax(szItem), "%L", id, "CAR_ROOT_GODMODE", id, get_user_godmode(id) ? "CAR_ON" : "CAR_OFF")
+    formatex(szItem, charsmax(szItem), "%L", id, "CAR_ROOT_GODMODE", id, (pev(id, pev_takedamage) == DAMAGE_NO) ? "CAR_ON" : "CAR_OFF")
     menu_additem(iMenu, szItem)
 }
 
@@ -1767,7 +1762,7 @@ stock LoadDataCar(iItem, iFlags, iSkin, Float:fOriginSwitch[3], Float:fAnglesSwi
 
 public carNoClip(id)
 {
-    set_user_noclip(id, !get_user_noclip(id))
+    set_pev(id, pev_movetype, pev(id, pev_movetype) == MOVETYPE_NOCLIP ? MOVETYPE_WALK : MOVETYPE_NOCLIP)
 
     carSound(id, SOUND_MENU_NAV)
     carMenu(id, MENU_ROOT)
@@ -1775,7 +1770,7 @@ public carNoClip(id)
 
 public carGodMode(id)
 {
-    set_user_godmode(id, !get_user_godmode(id))
+    set_pev(id, pev_takedamage, pev(id, pev_takedamage) == DAMAGE_NO ? DAMAGE_AIM : DAMAGE_NO)
 
     carSound(id, SOUND_MENU_NAV)
     carMenu(id, MENU_ROOT)
@@ -2261,37 +2256,37 @@ stock carSelect(eCar[CAR], iAction, bool:bCarExists = true)
     new iRenderColor[3]
     if ( iAction == TARGET_SELECT )
     {
-        if ( eCar[CAR_FLAGS] & FLAG_ACTIVE )  { iRenderColor[0] = g_iColorActive[0];    iRenderColor[1] = g_iColorActive[1];    iRenderColor[2] = g_iColorActive[2]; }
-        else                                  { iRenderColor[0] = g_iColorInactive[0];  iRenderColor[1] = g_iColorInactive[1];  iRenderColor[2] = g_iColorInactive[2]; }
+        if ( eCar[CAR_FLAGS] & FLAG_ACTIVE )  { iRenderColor[0] = 0;    iRenderColor[1] = 255;    iRenderColor[2] = 0; }
+        else                                  { iRenderColor[0] = 255;  iRenderColor[1] = 0;  iRenderColor[2] = 0; }
 
-        set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
-        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
-        set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
+        entitySetRendering(eCar[CAR_ID_ROPE], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
+        entitySetRendering(eCar[CAR_ID_SWITCH], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
+        entitySetRendering(eCar[CAR_ID_CAR], kRenderFxGlowShell, iRenderColor[0], iRenderColor[1], iRenderColor[2], kRenderTransAlpha, 16)
     }
     else if ( iAction == TARGET_GHOST )
     {
-        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
+        entitySetRendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
 
         if ( bCarExists )
         {
-            set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
-            set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
+            entitySetRendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
+            entitySetRendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, CAR_GHOST_ALPHA)
         }
     }
     else if ( iAction == TARGET_HIDE )
     {
-        set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
-        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
-        set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
+        entitySetRendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
+        entitySetRendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
+        entitySetRendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderTransAlpha, 0)
     }
     else if ( iAction == TARGET_CLEAR )
     {
-        set_ent_rendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
+        entitySetRendering(eCar[CAR_ID_SWITCH], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
 
         if ( bCarExists )
         {
-            set_ent_rendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
-            set_ent_rendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
+            entitySetRendering(eCar[CAR_ID_CAR], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
+            entitySetRendering(eCar[CAR_ID_ROPE], kRenderFxNone, 255, 255, 255, kRenderNormal, 255)
         }
     }
 }
@@ -2510,8 +2505,15 @@ stock LogConfigError(const iLine, const szText[], any:...)
 
     log_to_file(ERROR_FILE, "^nLine %d: %s", iLine, szError)
 }
+stock entitySetRendering(iEntity, iRenderFx, iRed, iGreen, iBlue, iRenderMode, iRenderAmt)
+{
+    new Float:fRenderColor[3]
+    fRenderColor[0] = float(iRed)
+    fRenderColor[1] = float(iGreen)
+    fRenderColor[2] = float(iBlue)
 
-
-
-
-
+    set_pev(iEntity, pev_renderfx, iRenderFx)
+    set_pev(iEntity, pev_rendercolor, fRenderColor)
+    set_pev(iEntity, pev_rendermode, iRenderMode)
+    set_pev(iEntity, pev_renderamt, float(iRenderAmt))
+}
