@@ -20,7 +20,6 @@
 
 #include <amxmodx>
 #include <amxmisc>
-#include <cstrike>
 #include <fakemeta>
 #include <hamsandwich>
 #include <xs>
@@ -1484,7 +1483,7 @@ public carTask()
 
 stock carCreate(id, iItem)
 {
-    new iEnt = cs_create_entity("info_target")
+    new iEnt = engfunc(EngFunc_CreateNamedEntity, engfunc(EngFunc_AllocString, "info_target"))
     if ( !pev_valid(iEnt) )
         return
 
@@ -1523,7 +1522,7 @@ stock carCreate(id, iItem)
 
 stock carCreateCar(eCar[CAR])
 {
-    new iEnt = cs_create_entity("info_target")
+    new iEnt = engfunc(EngFunc_CreateNamedEntity, engfunc(EngFunc_AllocString, "info_target"))
     if ( !pev_valid(iEnt) )
         return
 
@@ -1549,7 +1548,7 @@ stock carCreateCar(eCar[CAR])
 
 stock carCreateRope(eCar[CAR])
 {
-    new iEnt = cs_create_entity("info_target")
+    new iEnt = engfunc(EngFunc_CreateNamedEntity, engfunc(EngFunc_AllocString, "info_target"))
     if ( !pev_valid(iEnt) )
         return
 
@@ -1871,7 +1870,7 @@ public fwdUse(iEnt, iCaller, iActivator, iType, Float:fValue)
 
     if ( !(eCar[CAR_FLAGS] & FLAG_ACTIVE)
     || eCar[CAR_FLAGS] & (FLAG_FALL | FLAG_IDLE)
-    || !(CsTeams:eCar[CAR_TEAM] & cs_get_user_team(iActivator))
+    || !(eCar[CAR_TEAM] & get_user_team(iActivator))
     || get_gametime() < eCar[CAR_NEXT_ACTIVE] )
         return HAM_IGNORED
 
