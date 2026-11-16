@@ -18,6 +18,10 @@ Car Traps can be placed, managed and configured during gameplay with runtime con
 - Dynamic Car Trap rotation and natural ghost preview placement
 - Custom Car Trap setups are saved per map and automatically loaded on every map start
 
+## 📋 Requirements
+- ReGameDLL
+- AMX Mod X 1.10+
+
 ## 💬 Commands
 - `say /ct` - Opens the Car Trap menu.
 - `say_team /ct` - Opens the Car Trap menu.
