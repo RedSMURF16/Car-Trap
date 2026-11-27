@@ -1,7 +1,7 @@
 <h1 align="center">Car Trap</h1>
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=bnDntG8pp1g"><img src="https://img.youtube.com/vi/bnDntG8pp1g/maxresdefault.jpg" alt="Watch on YouTube" width="600"></a>
+  <img src="images/demo.gif" alt="Car Trap">
 </p>
 
 ## 📝 Description
